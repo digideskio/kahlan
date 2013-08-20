@@ -1,0 +1,210 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width; initial-scale=1.0" />
+
+		<title>Kahlan - The PHP Test Framework for Freedom, Truth, and Justice</title>
+
+		<meta name="description" content="Test framework for PHP 5.4+" />
+		<meta name="author" content="CrysaLEAD, Craftsmen" />
+
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans+Narrow" />
+		<link rel="stylesheet" href="css/prettify.css" />
+		<link rel="stylesheet" href="css/styles.css" />
+	</head>
+
+	<body onload="prettyPrint()">
+		<div>
+			<a href="http://github.com/crysalead/kahlan" class="github" target="_blank">
+				<img src="img/github.png" alt="Fork me on GitHub">
+			</a>
+			<div class="main">
+				<header>
+					<h1><span class="blue">K</span>ahlan - The PHP Test Framework</h1>
+					<div class="baseline">— for Freedom, Truth, and Justice —</div>
+				</header>
+				<aside class="menu">
+					<ul>
+						<li>
+							<a class="active" href="index.html">Why Use This ?</a>
+						</li>
+						<li>
+							<a href="overview.html">Overview</a>
+						</li>
+						<li>
+							<a href="start.html">Getting Started</a>
+						</li>
+						<li>
+							<a href="matcher.html">Matchers</a>
+						</li>
+						<li>
+							<a href="stub.html">Stubs</a>
+						</li>
+						<li>
+							<a href="monkey.html">Monkey Patching</a>
+						</li>
+						<li>
+							<a href="reporter.html">Reporters</a>
+						</li>
+						<li>
+							<a href="tips.html">Pro tips</a>
+						</li>
+					</ul>
+				</aside>
+				<section class="code">
+					<h2>Main Features</h2>
+					<ul>
+						<li><strong>Keep your tests organized using a closure based syntax.</strong></li>
+						<li><strong>Allow to set stubs on your class methods directly.</strong></li>
+						<li><strong>Allow Monkey Patching (ie. allows replacement of core functions/classes on the fly).</strong></li>
+						<li><strong>Allow to check called methods on your class directly.</strong></li>
+						<li><strong>Also work for static methods.</strong></li>
+						<li><strong>Small API & Small code base (~5k loc) </strong></li>
+						<li><strong>No PECL-extentions just plain PHP.</strong></li>
+						<li><strong>Requirements: Using the <a href="http://getcomposer.org/" target="_blank">Composer autoloader</a> for loading your classes.</strong></li>
+					</ul>
+					<h2>Motivations</h2>
+					<p>
+						Kahlan was created out of frustration with other PHP test frameworks. Instead of introducing new concepts and/or tools for building tests, Kahlan just provide an environment which allow to <strong>stub and monkey patch your code directly</strong> like in Ruby or JavaScript and without any PECL-extentions.
+					</p>
+					<p>
+						This simplicity leads to more meaningful tests with a minium of code. Tests need to be easy to read & easy to maintain. Building tests which require to over-engineer your application or which require a lot of extra code is just a waste of time and money.
+					</p>
+					<h2>How to build maintainable tests ?</h2>
+					<p>
+						To keep your tests clean and maintainable <strong>tests require to be organized</strong>.
+					<p>
+						Khalan rewrited for PHP a way of thinking which already exists in other communities like Ruby or Javascript using a Jasmine syntax.
+					</p>
+					<h2>Example</h2>
+					<p>
+						To illustrate this, <strong>below the comparaison of differents way of writing a "same test"</strong> using different test frameworks. I used the following <a href="https://github.com/atoum/atoum/blob/46202eb9d94e691b0d02be6938ac82e5b16b2e74/tests/units/classes/asserters/dateTime.php#L198-215" target="_blank">atoum's test</a> as an example.
+					</p>
+					<p>
+						<em>Since I'm not sure about what this test example is about, the port below is probably not accurate but only tends to show differences about how tests are organized.</em>
+					</p>
+					<h3>
+						Atoum version
+					</h3>
+					<ul>
+						<li>Using the fluent interface for organizing test is probably not the best feature of this framework.</li>
+						<li>Compact syntax, pretty difficult to see what related context the asserts are about.</li>
+					</ul>
+<pre class="prettyprint">
+public function testHasTime() {
+	$this
+		->if($asserter = new dateTime($generator = new asserter\generator()))
+		->then
+			->exception(function() use ($asserter) { $asserter->hasTime(1, 2, 3); })
+				->isInstanceOf('mageekguy\atoum\exceptions\logic')
+				->hasMessage('Instance of \\dateTime is undefined')
+		->if($asserter->setWith($dateTime = new \DateTime('01:02:03')))
+		->then
+			->exception(function() use (& $line, $asserter) { $line = __LINE__; $asserter->hasTime(4, 5, 6); })
+				->isInstanceOf('mageekguy\atoum\asserter\exception')
+				->hasMessage(sprintf($generator->getLocale()->_('Time is %s instead of %s'), '01:02:03', '04:05:06'))
+			->object($asserter->hasTime('01', '02', '03'))->isIdenticalTo($asserter)
+			->object($asserter->hasTime('1', '2', '3'))->isIdenticalTo($asserter)
+			->object($asserter->hasTime(1, 2, 3))->isIdenticalTo($asserter)
+	;
+}
+</pre>
+					<h3>PHPUnit version</h3>
+					<ul>
+						<li>Tests related to a same method are scattered in different functions. This organization make tests difficult (read "impossible" for all humain being) to maintain and produce a favorable context for tests duplication.</li>
+						<li>Need to repeat some code initializations in each tests if you don't want to split.</li>
+					</ul>
+<pre class="prettyprint">
+use mageekguy\atoum\tests\units\asserters\asserter\generator;
+
+protected $generator = null;
+
+protected $asserter = null;
+
+protected function setUp() {
+	$this->generator = new generator()
+	$this->asserter = new dateTime();
+}
+
+/**
+ * @expectedException        mageekguy\atoum\exceptions\logic
+ * @expectedExceptionMessage Instance of \\dateTime is undefined
+ */
+public function testHasTimeThrowsAnExceptionIfTheAsserterIsNotinitialized() {
+	$this->asserter->hasTime(1, 2, 3);
+}
+
+public function testHasTimeThrowsAnExceptionIfTheParametersDoNotMatchTheTime() {
+	$this->asserter->setWith($dateTime = new \DateTime('01:02:03'));
+	$this->setExpectedException(
+		'mageekguy\atoum\asserter\exception',
+		sprintf($this->generator->getLocale()->_('Time is %s instead of %s'), '01:02:03', '04:05:06')
+	);
+	$asserter->hasTime(4, 5, 6);
+}
+
+public function testHasTimeMatchesForEquivalentNotations() {
+	$this->asserter->setWith($dateTime = new \DateTime('01:02:03'));
+	$this->assertSame($this->asserter, $this->asserter->hasTime('01', '02', '03'));
+	$this->assertSame($this->asserter, $this->asserter->hasTime('1', '2', '3'));
+	$this->assertSame($this->asserter, $this->asserter->hasTime(1, 2, 3));
+}
+</pre>
+
+					<h3>Kahlan version</h3>
+					<ul>
+						<li>More verbose but easier to read.</li>
+						<li>Code initialization can be done at different levels using some <code>beforeX</code>/<code>afterX</code> hooks.</li>
+						<li><code>describe</code>/<code>context</code> closures clearly identify the use cases</li>
+					</ul>
+<pre class="prettyprint">
+use mageekguy\atoum\exceptions\logic;
+use mageekguy\atoum\asserter\exception;
+use mageekguy\atoum\tests\units\asserters\asserter\generator;
+
+describe("dateTime::testHasTime", function() {
+
+	beforeEach(function() {
+		$this->generator = new generator();
+		$this->asserter = new dateTime($this->generator);
+	});
+
+	context("when asserter is not initialized", function() {
+
+		it("throws an exception if `hasTime()` is called", function() {
+			expect(function(){
+				$this->asserter->hasTime(1, 2, 3);
+			})->toThrow(new logic('Instance of \\dateTime is undefined'));
+		});
+
+	});
+
+	context("when time is set to '01:02:03'", function() {
+
+		beforeEach(function() {
+			$this->asserter->setWith($dateTime = new \DateTime('01:02:03');
+		});
+
+		it("throws an exception for 4, 5, 6", function() {
+			$message = sprintf($this->generator->getLocale()->_('Time is %s instead of %s'), '01:02:03', '04:05:06');
+			expect(function(){
+				$this->asserter->hasTime(4, 5, 6);
+			})->toThrow(new exception($message));
+		});
+
+		it("matches for equivalent notations", function() {
+			expect($this->asserter->hasTime('01', '02', '03'))->toBe($this->asserter);
+			expect($this->asserter->hasTime('1', '2', '3'))->toBe($this->asserter);
+			expect($this->asserter->hasTime(1, 2, 3))->toBe($this->asserter);
+		});
+	});
+
+});
+</pre>
+				</section>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="js/prettify.js"></script>
+	</body>
+</html>

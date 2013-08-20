@@ -1,0 +1,184 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width; initial-scale=1.0" />
+
+		<title>Kahlan - The PHP Test Framework for Freedom, Truth, and Justice</title>
+
+		<meta name="description" content="Test framework for PHP 5.4+" />
+		<meta name="author" content="CrysaLEAD, Craftsmen" />
+
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans+Narrow" />
+		<link rel="stylesheet" href="css/prettify.css" />
+		<link rel="stylesheet" href="css/styles.css" />
+	</head>
+
+	<body onload="prettyPrint()">
+		<div>
+			<a href="http://github.com/crysalead/kahlan" class="github" target="_blank">
+				<img src="img/github.png" alt="Fork me on GitHub">
+			</a>
+			<div class="main">
+				<header>
+					<h1><span class="blue">K</span>ahlan - The PHP Test Framework</h1>
+					<div class="baseline">— for Freedom, Truth, and Justice —</div>
+				</header>
+				<aside class="menu">
+					<ul>
+						<li>
+							<a href="index.html">Why Use This ?</a>
+						</li>
+						<li>
+							<a class="active" href="overview.html">Overview</a>
+						</li>
+						<li>
+							<a href="start.html">Getting Started</a>
+						</li>
+						<li>
+							<a href="matcher.html">Matchers</a>
+						</li>
+						<li>
+							<a href="stub.html">Stubs</a>
+						</li>
+						<li>
+							<a href="monkey.html">Monkey Patching</a>
+						</li>
+						<li>
+							<a href="reporter.html">Reporters</a>
+						</li>
+						<li>
+							<a href="tips.html">Pro tips</a>
+						</li>
+					</ul>
+				</aside>
+				<section class="code">
+					<h2>Overview</h2>
+					<p>
+						<strong>Kahlan</strong> is a behavior-driven development (BDD) library for  <strong>PHP 5.4+</strong>, a la RSpec or JSpec.
+					</p>
+					<h2>Describe Your Specs</h2>
+					<p>
+						Because test's organization is one of the key point of keeping clean and maintainable tests, Kahlan allow to group tests syntaxically using a closure syntax like numbers of awesome test framework in other languages.
+					</p>
+<pre class="prettyprint">
+describe("toBe::match", function() {
+
+	it("passes if true === true", function() {
+		expect(true)->toBe(true);
+	});
+
+});
+</pre>
+
+					<ul>
+						<li><code>describe</code>: it generally contains all specs for a method. Using the class method's name is probably the better option for a clean description.</li>
+						<li><code>context</code>: it's used to group tests according to some use cases. Using "when" or "with" followed by the description of the use case is generally a good practice.</li>
+						<li><code>it</code>: it contain the code to test. Keep its corresponding description short and clear.</li>
+					</ul>
+
+					<h2>Setup and Teardown</h2>
+					<p>
+						As the name implies the <code>beforeEach</code> function is called once before <strong>each</strong> spec contained in a <code>describe</code>.
+					</p>
+<pre class="prettyprint">
+describe("Setup and Teardown", function() {
+
+	beforeEach(function() {
+		$this->foo = 1;
+	});
+
+	describe("Setup and Teardown", function() {
+
+		beforeEach(function() {
+			$this->foo++;
+		});
+
+		it("expects that the foo variable is equal to 2", function() {
+			expect($this->foo)->toBe(2);
+		});
+
+	});
+
+});
+</pre>
+					<p>
+						Kahlan allow the following "Setup and Teardown" functions at each <code>describe</code>/<code>context</code> level:
+					</p>
+					<ul>
+						<li><code>before</code>: Runned once inside a describe or context before all its specs.</li>
+						<li><code>beforeEach</code>: Runned before each specs of the same level.</li>
+						<li><code>afterEach</code>: Runned after each specs of the same level.</li>
+						<li><code>after</code>: Runned once inside a describe or context after all its specs.</li>
+					</ul>
+
+					<h2>Expectations</h2>
+					<p>
+						Expectations are built using the <code>expect</code> function which takes a value, called the <strong>actual</strong> which is chained with a matcher function taking the <strong>expected</strong> value as parameter.
+					</p>
+<pre class="prettyprint">
+describe("Expectations", function() {
+
+	it("expects that 5 > 4", function() {
+		expect(5)->toBeGreaterThan(4);
+	});
+
+});
+</pre>
+					<p>
+						You can find <a href="matcher.html">all built-in matchers here</a>.
+					</p>
+					<h2>Negative Expectations</h2>
+					<p>
+						Any matcher can be evaluated negatively by chaining <code>expect</code> with <code>not</code> before calling the matcher.
+					</p>
+<pre class="prettyprint">
+describe("Negative Expectations", function() {
+
+	it("doesn't expect that 4 > 5", function() {
+		expect(4)->not->toBeGreaterThan(5);
+	});
+
+});
+</pre>
+
+					<h2>Variable scope</h2>
+					<p>
+						You can use <code>$this</code> for making a variable <strong>available</strong> for a sub scope.
+					</p>
+<pre class="prettyprint">
+describe("Scope inheritance", function() {
+
+	beforeEach(function() {
+		$this->foo = 5;
+	});
+
+	it("accesses variable defined in the parent scope", function() {
+		expect($this->foo)->toEqual(5);
+	});
+
+});
+</pre>
+					<h3>Scope isolation</h3>
+					<p>
+						<strong>Note:</strong> A variable setted with <code>$this</code> inside a <code>describe/context</code> or a <code>it</code> <strong>will not</strong> be available in a parent scope.
+					</p>
+<pre class="prettyprint">
+describe("Scope inheritance bis", function() {
+
+	it("sets a variable in the scope", function() {
+		$this->foo = 2;
+		expect($this->foo)->toEqual(2);
+	});
+
+	it("doesn't find any foo variable in the scope", function() {
+		expect(isset($this->foo))->toBe(false);
+	});
+
+});
+</pre>
+				</section>
+			</div>
+		</div>
+		<script type="text/javascript" src="js/prettify.js"></script>
+	</body>
+</html>

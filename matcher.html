@@ -1,0 +1,265 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width; initial-scale=1.0" />
+
+		<title>Kahlan - The PHP Test Framework for Freedom, Truth, and Justice</title>
+
+		<meta name="description" content="Test framework for PHP 5.4+" />
+		<meta name="author" content="CrysaLEAD, Craftsmen" />
+
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans+Narrow" />
+		<link rel="stylesheet" href="css/prettify.css" />
+		<link rel="stylesheet" href="css/styles.css" />
+	</head>
+
+	<body onload="prettyPrint()">
+		<div>
+			<a href="http://github.com/crysalead/kahlan" class="github" target="_blank">
+				<img src="img/github.png" alt="Fork me on GitHub">
+			</a>
+			<div class="main">
+				<header>
+					<h1><span class="blue">K</span>ahlan - The PHP Test Framework</h1>
+					<div class="baseline">— for Freedom, Truth, and Justice —</div>
+				</header>
+				<aside class="menu">
+					<ul>
+						<li>
+							<a href="index.html">Why Use This ?</a>
+						</li>
+						<li>
+							<a href="overview.html">Overview</a>
+						</li>
+						<li>
+							<a href="start.html">Getting Started</a>
+						</li>
+						<li>
+							<a class="active" href="matcher.html">Matchers</a>
+						</li>
+						<li>
+							<a href="stub.html">Stubs</a>
+						</li>
+						<li>
+							<a href="monkey.html">Monkey Patching</a>
+						</li>
+						<li>
+							<a href="reporter.html">Reporters</a>
+						</li>
+						<li>
+							<a href="tips.html">Pro tips</a>
+						</li>
+					</ul>
+				</aside>
+				<section class="code">
+					<h2>Matchers</h2>
+					<ul>
+						<li><a href="#classic">Classic matchers</a></li>
+						<li><a href="#method">Method invocation matchers</a></li>
+						<li><a href="#argument">Argument matchers</a></li>
+						<li><a href="#custom">Custom matchers</a></li>
+					</ul>
+					<h2><a name="classic"></a>Classic matchers</h2>
+					<p>You can use these methods inside any spec.</p>
+
+					<h4>toBe($expected)</h4>
+<pre class="prettyprint">
+it("passes if $actual === $expected", function() {
+	expect(true)->toBe(true);
+});
+</pre>
+					<h4>toEqual($expected)</h4>
+<pre class="prettyprint">
+it("passes if $actual == $expected", function() {
+	expect(true)->toEqual(1);
+});
+</pre>
+					<h4>toBeTruthy()</h4>
+<pre class="prettyprint">
+it("passes if $actual is truthy", function() {
+	expect(1)->toBeTruthy();
+});
+</pre>
+					<h4>toBeFalsy() / toBeEmpty()</h4>
+<pre class="prettyprint">
+it("passes if $actual is falsy", function() {
+	expect(0)->toBeTruthy();
+});
+</pre>
+					<h4>toBeNull()</h4>
+<pre class="prettyprint">
+it("passes if $actual is null", function() {
+	expect(null)->toBeNull();
+});
+</pre>
+					<h4>toBeA()</h4>
+<pre class="prettyprint">
+it("passes if $actual is of a specific type", function() {
+	expect('Hello World!')->toBeA('string');
+	expect(false)->toBeA('boolean');
+	expect(new stdClass())->toBeA('object');
+});
+</pre>
+					<h4>toBeAnInstanceOf()</h4>
+<pre class="prettyprint">
+it("passes if $actual is an instance of stdObject", function() {
+	expect(new stdClass())->toBeAnInstanceOf('stdObject');
+});
+</pre>
+					<h4>toHaveLength()</h4>
+<pre class="prettyprint">
+it("passes if $actual has the correct length", function() {
+	expect('Hello World!')->toHaveLength(12);
+	expect(['a', 'b', 'c'])->toHaveLength(3);
+});
+</pre>
+					<h4>toContain($expected)</h4>
+<pre class="prettyprint">
+it("passes if $actual contain $expected", function() {
+	expect([1, 2, 3])->toContain(3);
+});
+</pre>
+					<h4>toBeCloseTo($expected)</h4>
+<pre class="prettyprint">
+it("passes if abs($actual - $expected)*2 < 0.01", function() {
+	expect(1.23)->toBeCloseTo(1.225, 2);
+	expect(1.23)->not->toBeCloseTo(1.2249999, 2);
+});
+</pre>
+					<h4>toBeGreaterThan($expected)</h4>
+<pre class="prettyprint">
+it("passes if $actual > $expected", function() {
+	expect(1)->toBeGreaterThan(0.999);
+});
+</pre>
+					<h4>toBeLessThan($expected)</h4>
+<pre class="prettyprint">
+it("passes if $actual < $expected", function() {
+	expect(0.999)->toBeLessThan(1);
+});
+</pre>
+					<h4>toThrow($expected)</h4>
+<pre class="prettyprint">
+it("passes if $actual throws the $expected exception", function() {
+	$closure = function() {
+		throw new RuntimeException('exception message');
+	};
+	expect($closure)->toThrow();
+	expect($closure)->toThrow(new RuntimeException());
+	expect($closure)->toThrow(new RuntimeException('exception message'));
+});
+</pre>
+					<h4>toEcho($expected)</h4>
+<pre class="prettyprint">
+it("passes if $actual throws the $expected exception", function() {
+	$closure = function() {
+		echo "Hello World!";
+	};
+	expect($closure)->toEcho("Hello World!");
+});
+</pre>
+					<h2><a name="method"></a>Method invocation matchers</h2>
+
+					<h4>toReceive($expected)</h4>
+<pre class="prettyprint">
+it("expects $foo to receive message() with the correct param", function() {
+	$foo = new Foo();
+	expect($foo)->toReceive('message')->with('My Message');
+	$foo->message('My Message');
+});
+</pre>
+
+<pre class="prettyprint">
+it("expects $foo to receive ::message() with the correct param", function() {
+	$foo = new Foo();
+	expect($foo)->toReceive('::message')->with('My Message');
+	$foo::message('My Message');
+});
+</pre>
+
+					<h4>toReceiveNext($expected)</h4>
+<pre class="prettyprint">
+it("expects $foo to receive message() followed by foo()", function() {
+	$foo = new Foo();
+	expect($foo)->toReceive('message');
+	expect($foo)->toReceiveNext('foo');
+	$foo->message();
+	$foo->foo();
+});
+</pre>
+
+<pre class="prettyprint">
+it("expects $foo to receive message() but not followed by foo()", function() {
+	$foo = new Foo();
+	expect($foo)->toReceive('message');
+	expect($foo)->not->toReceiveNext('foo');
+	$foo->foo();
+	$foo->message();
+});
+</pre>
+
+					<h2><a name="argument"></a>Argument Matchers</h2>
+					<p>
+						To enable <strong>Argument Matching</strong> just add the following use statement in the top of your tests:
+					</p>
+<pre class="prettyprint">
+use kahlan\Arg;
+</pre>
+					<p>
+						With the <code>Arg</code> class you can use any classic matchers to test arguments.
+					</p>
+
+<pre class="prettyprint">
+it("expects params match the argument matchers", function() {
+	$foo = new Foo();
+	expect($foo)->toReceive('message')->with(Arg::toBeA('boolean'));
+	expect($foo)->toReceiveNext('message')->with(Arg::toBeA('string'));
+	$foo->message(true);
+	$foo->message('Hello World!');
+});
+</pre>
+
+<pre class="prettyprint">
+it("expects params match the toContain argument matcher", function() {
+	$foo = new Foo();
+	expect($foo)->toReceive('message')->with(Arg::toContain('My Message'));
+	$foo->message(['My Message', 'My Other Message']);
+});
+</pre>
+
+
+					<h2><a name="custom"></a>Custom matchers</h2>
+
+					<p>
+						You can create you own matchers. A matcher is a simple class with a static <code>match()</code> & <code>description()</code> methods.
+					</p>
+					<p>
+						Example of an <code>toBeZero()</code> matcher:
+					</p>
+<pre class="prettyprint">
+namespace my\namespace;
+
+class ToBeZero {
+
+	public static function match($actual, $expected = null) {
+		return $actual === 0;
+	}
+
+	public static function description() {
+		return "be equal to 0.";
+	}
+}
+</pre>
+					<p>
+						Once created you only need to regiter it using the following syntax:
+					</p>
+<pre class="prettyprint">
+kahlan\Matcher::register('toBeZero', 'my\namespace\ToBeZero');
+</pre>
+				</section>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="js/prettify.js"></script>
+	</body>
+</html>

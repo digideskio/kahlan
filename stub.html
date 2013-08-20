@@ -1,0 +1,132 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width; initial-scale=1.0" />
+
+		<title>Kahlan - The PHP Test Framework for Freedom, Truth, and Justice</title>
+
+		<meta name="description" content="Test framework for PHP 5.4+" />
+		<meta name="author" content="CrysaLEAD, Craftsmen" />
+
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans+Narrow" />
+		<link rel="stylesheet" href="css/prettify.css" />
+		<link rel="stylesheet" href="css/styles.css" />
+	</head>
+
+	<body onload="prettyPrint()">
+		<div>
+			<a href="http://github.com/crysalead/kahlan" class="github" target="_blank">
+				<img src="img/github.png" alt="Fork me on GitHub">
+			</a>
+			<div class="main">
+				<header>
+					<h1><span class="blue">K</span>ahlan - The PHP Test Framework</h1>
+					<div class="baseline">— for Freedom, Truth, and Justice —</div>
+				</header>
+				<aside class="menu">
+					<ul>
+						<li>
+							<a href="index.html">Why Use This ?</a>
+						</li>
+						<li>
+							<a href="overview.html">Overview</a>
+						</li>
+						<li>
+							<a href="start.html">Getting Started</a>
+						</li>
+						<li>
+							<a href="matcher.html">Matchers</a>
+						</li>
+						<li>
+							<a class="active" href="stub.html">Stubs</a>
+						</li>
+						<li>
+							<a href="monkey.html">Monkey Patching</a>
+						</li>
+						<li>
+							<a href="reporter.html">Reporters</a>
+						</li>
+						<li>
+							<a href="tips.html">Pro tips</a>
+						</li>
+					</ul>
+				</aside>
+				<section class="code">
+
+					<h2>Stubs</h2>
+					<p>
+						To enable <strong>Method Stubbing</strong> add the following use statement in the top of your tests:
+					</p>
+<pre class="prettyprint">
+use kahlan\plugin\Stub;
+</pre>
+
+					<h3>Method Stubbing</h3>
+					<p>
+						<code>Subs::on()</code> can stub any existing methods on any class (and also unexisting methods if <code>__call()</code> and or <code>__callStatic()</code> are defined in your class).
+					</p>
+<pre class="prettyprint">
+it("stubs a method", function() {
+	$instance = new MyClass();
+	Stub::on($instance)->method('myMethod')->andReturn('Good Morning World!');
+	expect($instance->myMethod())->toBe('Good Morning World!');
+});
+</pre>
+					<p>
+						You can also stub static methods:
+					</p>
+<pre class="prettyprint">
+it("stubs a static method", function() {
+	$instance = new MyClass();
+	Stub::on($instance)->method('::myMethod')->andReturn('Good Morning World!');
+	expect($instance::myMethod())->toBe('Good Morning World!');
+});
+</pre>
+					<p>
+						You can use also use an array based syntax for reducing verbosity:
+					</p>
+<pre class="prettyprint">
+it("stubs many methods", function() {
+	$instance = new MyClass();
+	Stub::on($instance)->method([
+		'message' => ['Good Morning World!', 'Good Bye World!'],
+		'bar' => ['Hello Bar!']
+	]);
+
+	expect($instance->message())->toBe('Good Morning World!');
+	expect($instance->message())->toBe('Good Bye World!');
+	expect($instance->bar())->toBe('Hello Bar!');
+});
+</pre>
+
+					<h3>Instance Stubbing</h3>
+					<p>
+						When you are testing your application, sometimes you need a simple polyvalent instance to simply receive a couple of calls for unit testing a behavior. In this case your can create a simple polyvalent instance using <code>Stub::create()</code>:
+					</p>
+<pre class="prettyprint">
+it("generates a polyvalent instance", function() {
+	$stub = Stub::create();
+	expect(is_object($stub))->toBe(true);
+});
+</pre>
+					<h3>Class Stubbing</h3>
+					<p>
+						You can also create some specific class using <code>Stub::classname()</code>:.
+					</p>
+<pre class="prettyprint">
+it("generates a polyvalent class", function() {
+	$stub = Stub::classname();
+	expect(is_string($stub))->toBe(true);
+});
+</pre>
+					<p>
+						Generated stubs implement the following interfaces: `ArrayAccess` & `Iterator` so you should be able to use it for any instance/class substitution.
+					</p>
+
+				</section>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="js/prettify.js"></script>
+	</body>
+</html>

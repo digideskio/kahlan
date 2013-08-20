@@ -1,0 +1,356 @@
+/* Commons */
+html, body, ul {
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	background-color: #ffffff;
+}
+
+body {
+	font:normal 14px 'PT Sans', sans-serif;
+	line-height: 1.5em;
+	color: #444444;
+}
+
+p {
+	margin: 10px 25px;
+}
+
+li {
+	list-style: none;
+}
+
+a:visited {
+	color: #2BA6CB;
+}
+
+a:focus {
+	outline: none;
+}
+
+code {
+	color: #00537d;
+	font-weight: bold;
+}
+
+pre{
+	font:normal 13px monospace;
+	line-height: 1.4em;
+	margin: 25px 25px 25px 25px;
+	tab-size: 4;
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	overflow-x: auto;
+}
+
+h1 {
+	font-family: 'PT Sans Narrow',sans-serif;
+	font-weight: bold;
+	line-height: 1.7em;
+	margin: 0;
+}
+
+h2, h3, h4 {
+	font-family: 'PT Sans Narrow',sans-serif;
+	font-weight: normal;
+	margin: 1em 0 0 0;
+}
+
+h2 {
+	font-size: 24px;
+	color: #DB7657;
+}
+
+h2:before {
+	position: relative;
+	font:normal 0.8em sans-serif;
+	color: #000000;
+	content: '\26B6';
+	top: -0.15em;
+	margin: 0 1em 0 0;
+}
+
+h2:before {
+	margin: 0 0.5em 0 0;
+	color: #DB7657;
+}
+
+h3 {
+	font-size: 22px;
+	margin: 10px 25px 10px 25px;
+	color: #7657DB;
+}
+
+h4 {
+	background-color: #F0F0F0;
+	border: 1px solid #DDDDDD;
+	border-radius: 4px 4px 4px 4px;
+	font-size: 20px;
+	padding: 2px 8px;
+	color:#00537d;
+	margin: 10px 25px 15px 25px;
+}
+
+em {
+	color: #666666;
+}
+
+/* Section commons */
+
+section {
+	display: block;
+}
+
+section ul {
+	margin: 10px 25px;
+}
+
+section ul li {
+	list-style: none;
+	padding: 0.4em 0 0.4em 0;
+	text-indent: -0.5em;
+}
+
+section ul li:before {
+	content: "› ";
+	color: #2BA6CB;
+}
+
+section a {
+	color: #2BA6CB;
+	text-decoration: none;
+}
+
+section a:hover {
+	text-decoration: underline;
+}
+
+/* Tools */
+.blue {
+	color: #2BA6CB;
+}
+
+.green {
+	color: #69AA1C;
+}
+
+/* Header */
+header {
+	position:relative;
+	overflow: hidden;
+	font-size: 22px;
+	padding: 10px 0;
+	border-bottom: 1px solid #eeeeee;
+	color: #aaaaaa;
+}
+
+.baseline {
+	font-size: 14px;
+	position: relative;
+	color: #000000;
+	text-align: right;
+}
+
+.github {
+	position: absolute;
+	top: 0;
+	right: -2;
+	border: 0;
+	background: none;
+}
+
+.github:focus {
+	outline: none;
+}
+
+/* Menu */
+.menu {
+	font-family: 'PT Sans Narrow',sans-serif;
+	font-size: 20px;
+	width: 200px;
+	float: left;
+	margin: 15px 20px 0px 0px;
+}
+
+.menu a {
+	display: block;
+	padding: 10px 0px;
+	border-bottom: solid 3px #ffffff;
+	color: #2BA6CB;
+	text-decoration: none;
+}
+
+.menu a:hover {
+	border-bottom: solid 3px #2BA6CB;
+	color: #2BA6CB;
+}
+
+.menu a.active {
+	font-weight: bold;
+}
+
+/* Footer */
+footer {
+	background-color: #121214;
+	background-position: center 0;
+	background-repeat: no-repeat;
+	margin-top: 120px;
+	border-top: 4px solid #1F1F1F;
+	font-size: 0.9em;
+	padding: 80px 0 0;
+	position: relative;
+}
+
+footer div.footer-ribon {
+	background: #999;
+	position: absolute;
+	margin: -100px 0 0 30px;
+	padding: 10px 20px 6px 20px;
+}
+
+footer div.footer-ribon::before {
+	border-right: 10px solid #646464;
+	border-top: 16px solid transparent;
+	content: "";
+	display: block;
+	height: 0;
+	left: -17px;
+	position: absolute;
+	top: 0;
+	width: 7px;
+}
+
+footer div.footer-ribon span {
+	color: #FFF;
+	font-family: "Shadows Into Light", cursive;
+	font-size: 1.6em;
+}
+
+footer div.container div.row > div {
+	margin-bottom: 25px;
+}
+
+footer div.container input:focus {
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+footer div.social-icons li:hover {
+	background-color: transparent;
+}
+
+footer div.twitter a.time {
+	color: #999;
+	display: block;
+	font-size: 0.9em;
+	padding-top: 3px;
+}
+
+footer div.twitter ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+footer ul.contact {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+footer ul.contact i {
+	float: left;
+	margin: 4px 5px 10px 0;
+}
+
+footer ul.contact p {
+	margin-bottom: 10px;
+}
+
+footer a.logo {
+	display: block;
+}
+
+footer form {
+	filter: alpha(opacity=85);
+	opacity: 0.85;
+}
+
+footer h1,
+footer h2,
+footer h3,
+footer h4,
+footer h5,
+footer a {
+	color: #FFF !important;
+}
+
+footer a:hover {
+	color: #CCC;
+}
+
+footer h4 {
+	font-size: 1.8em;
+	font-weight: 200;
+	text-shadow: 1px 1px 1px #000;
+}
+
+div.footer-copyright {
+	background: #0C0C0C;
+	border-top: 4px solid #111;
+	margin-top: 40px;
+	padding: 30px 0 10px;
+}
+
+div.footer-copyright nav {
+	float: right;
+}
+
+div.footer-copyright nav ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+div.footer-copyright nav ul li {
+	border-left: 1px solid #505050;
+	display: inline-block;
+	line-height: 12px;
+	margin: 0;
+	padding: 0 8px;
+}
+
+div.footer-copyright nav ul li:first-child {
+	border: medium none;
+	padding-left: 0;
+}
+
+div.footer-copyright p {
+	color: #555;
+	margin: 0;
+	padding: 0;
+}
+
+footer div.alert a {
+	color: #222 !important;
+}
+
+footer div.alert a:hover {
+	color: #666 !important;
+}
+
+/* Layout */
+
+.main {
+	width: 1000px;
+	overflow: hidden;
+	margin: 0 auto;
+}
+
+.main section {
+	float: left;
+	width: 780px;
+}
