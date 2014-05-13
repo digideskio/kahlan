@@ -1,0 +1,107 @@
+#!/usr/bin/env php
+<?php
+
+namespace app\extensions\command;
+
+use lithium\util\String;
+use lithium\util\Inflector;
+use lithium\core\Libraries;
+use lithium\analysis\Inspector;
+
+class Rewrite extends \lithium\console\Command {
+
+	public $path;
+
+	protected $_matchers = [
+		'Equal'        => 'expect({:2})->toEqual({:1})',
+		'Identical'    => 'expect({:2})->toBe({:1})',
+		'True'         => 'expect({:1})->toBe(true)',
+		'False'        => 'expect({:1})->toBe(false)',
+		'Count'        => 'expect(count({:2}))->toBe({:1})',
+		'InstanceOf'   => 'expect({:2})->toBeAnInstanceOf({:1})',
+		'NotEqual'     => 'expect({:2})->not->toEqual({:1})',
+		'Null'         => 'expect({:1})->toBeNull()',
+		'InternalType' => 'expect({:2})->toBeA({:1})'
+	];
+
+	protected function _toClass($path) {
+		$file = Libraries::realPath($path);
+
+		$classes = array_filter(Inspector::classes(compact('file')), function($f) use ($file) {
+			return Libraries::realPath($f) === $file;
+		});
+		return key($classes);
+	}
+
+	protected function _toDescription($method) {
+		return str_replace('_', ' ', preg_replace('/^test_/', '', Inflector::underscore($method)));
+	}
+
+	protected function _trimLeadSpace($line, $space) {
+		if (!$space) {
+			return $line;
+		}
+		if (strpos($line, $space) === 0) {
+			return substr($line, strlen($space));
+		}
+		return $line;
+	}
+
+	public function run() {
+		$asserts = [];
+		$class = $this->_toClass($this->path);
+		$file = file_get_contents($this->path);
+		$info = Inspector::info($class);
+		$depends = Inspector::dependencies($class, ['type' => 'static']);
+		$info['depends'] = array_filter($depends, function($class) {
+			return strpos($class, '\\');
+		});
+
+		foreach (Inspector::methods($class, 'ranges') as $method => $range) {
+			if (!preg_match('/^test/', $method)) {
+				continue;
+			}
+			$asserts[$assert = $this->_toDescription($method)] = [];
+			$lines = array_values(Inspector::lines($file, $range));
+			$space = count($lines) && preg_match("/^\s+/", $lines[0], $m) ? $m[0] : '';
+
+			foreach ($lines as $line) {
+				if (!preg_match('/\$this->assert(\w+)\((.+)\);/', $line, $match)) {
+					$asserts[$assert][] = $this->_trimLeadSpace($line, $space);
+					continue;
+				}
+				list($line, $matcher, $params) = $match;
+				list($expected, $result) = (array_map('trim', explode(',', $params, 2)) + ['', '']);
+				$code = $this->_matchers[$matcher];
+				if (!$code) {
+					throw new \Exception("No matcher {$matcher}");
+				}
+				$asserts[$assert][] = String::insert($code, ['1' => $expected, '2' => $result]) . ";";
+			}
+		}
+
+		$this->out('<' . '?php', 2);
+		$describe = preg_replace('/Test$/', '', $info['shortName']);
+
+		foreach ($info['depends'] as $depend) {
+			$this->out("use {$depend};");
+		}
+		if ($info['depends']) {
+			$this->out('');
+		}
+
+		$this->out("describe(\"{$describe}\", function() {", 2);
+
+		foreach ($asserts as $name => $code) {
+			$this->out("\tit(\"{$name}\", function() {");
+
+			foreach ($code as $line) {
+				$this->out(trim($line) ? "\t\t{$line}" : '');
+			}
+			$this->out("\t});", 2);
+		}
+		$this->out("});");
+	}
+}
+
+?>
